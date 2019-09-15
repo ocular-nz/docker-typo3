@@ -2,6 +2,8 @@
 
 This image installs all required php extensions that TYPO3 wants, and applies the additional PHP resources that TYPO3 needs in the `php.ini` file.
 
+You still need to download a copy of TYPO3 and place it where your source code lives.
+
 ## How to use this image
 
 ### Docker installed
