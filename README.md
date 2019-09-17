@@ -32,13 +32,19 @@ The `Dockerfile` in this project is actually a Multi-Stage build. It first build
 
 Basically this means that the php-apache container has composer installed, but it doesn't have all the additional crap that was required to build it! This keeps container sizes small.
 
+```bash
+docker exec -it container_name composer dump-autoload
+```
+
 The only problem with the dockerised version of composer is that won't have a token to access GitHub, and unless you [set composer up according to Docker Hub](https://hub.docker.com/_/composer) to store cache and keys, you'll likely have to enter a token each time you run it. 
 
 ### Use
 
 Now that you have a built image, you can use it. Make sure you're in the directory with your website source files. Run the following command (the volume commands might be different on windows).
 
-```docker run --rm -it --name whatever -v $PWD:/var/www/html -p 8000:80 typo3dev:latest```
+```bash
+docker run --rm -it --name whatever -v $PWD:/var/www/html -p 8000:80 typo3dev:latest
+```
 
 This will run a container named `whatever` and mount your current directory into the `/var/www/html` directory inside the container, which is where apache is looking.
 
