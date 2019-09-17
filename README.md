@@ -57,3 +57,12 @@ Symlink typo `typo3` and `index.php` files as usual from there.
 ### Databases
 
 Once you're more familiar with Docker you'll use networks which can resolve container names instead of IP addresses, but for now if you want to connect to a database outside the container, you'll need to put the database host as `0.0.0.0`, not `localhost` or `127.0.0.1` because those refer to the container, not the host (your computer which is running the database).
+
+### Running php commands
+
+The copy of PHP inside your container will likely be different to the copy of PHP installed on your local machine (if you have it installed at all, you Docker master you). You will want to run your PHP commands *through* the container.
+
+```bash
+docker exec -it container_name vendor/bin/typo3cms extension:setupactive
+docker exec -it container_name php artisan migrate
+```
