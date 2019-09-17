@@ -14,6 +14,8 @@ https://hub.docker.com
 
 ### Build
 
+#### Non-composer mode
+
 Be in the directory of the `Dockerfile` and run the following command:
 
 ```docker build -t "typo3dev:latest" .```
@@ -21,6 +23,18 @@ Be in the directory of the `Dockerfile` and run the following command:
 You can change `typo3dev` to whatever you want. For example `yolo:latest`, or if you want to version your builds, `swag:0.0.1`.
 
 Giving version numbers to your images is good when you're changing your image over time and want to be able to spin up previous copies of your builds.
+
+#### Composer mode
+
+Use the instructions above but make one small change to your `sites-available/000-default.conf` file by changing `DocumentRoot /var/www/html` to `DocumentRoot /var/www/html/public`.
+
+If you have composer installed locally then you can just run `composer install` normally, otherwise if you want to run a dockerised version, run the following:
+
+```bash
+docker run --rm -it --name composer -v $PWD:/app composer install --ignore-platform-reqs
+```
+
+The only problem with the dockerised version of composer is that won't have a token to access GitHub, and unless you [set composer up according to Docker Hub](https://hub.docker.com/_/composer) to store cache and keys, you'll likely have to enter a token each time you run it. 
 
 ### Use
 

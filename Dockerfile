@@ -14,3 +14,4 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install zip
 
 COPY php/php.ini /usr/local/etc/php/php.ini
+COPY sites-available/000-default.conf /etc/apache2/sites-available/
