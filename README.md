@@ -66,3 +66,5 @@ The copy of PHP inside your container will likely be different to the copy of PH
 docker exec -it container_name vendor/bin/typo3cms extension:setupactive
 docker exec -it container_name php artisan migrate
 ```
+
+Be wary of permission issues. The container typically runs as a root user, and since it's creating files on your host machine they might be the wrong user for your environment.
