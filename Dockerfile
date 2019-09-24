@@ -21,3 +21,5 @@ RUN apt-get update && apt-get install -y \
 COPY php/php.ini /usr/local/etc/php/php.ini
 COPY php/conf.d/opcache.ini /usr/local/etc/php/conf.d/
 COPY sites-available/000-default.conf /etc/apache2/sites-available/
+
+RUN a2enmod rewrite
