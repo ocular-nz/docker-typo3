@@ -1,8 +1,9 @@
 # Docker TYPO3 Dev
 
-This image installs all required php extensions that TYPO3 wants, and applies the additional PHP resources that TYPO3 needs in the `php.ini` file.
+This Dockerfile creates a container with composer and PHP installed, along with the additional PHP extensions and `.ini` changes that TYPO3 requests.
 
-You still need to download a copy of TYPO3 and place it where your source code lives.
+The container is to be used in conjunction with your TYPO3 website source code.
+You would mount your code to `/var/www/html`.
 
 ## How to use this image
 
@@ -28,7 +29,7 @@ Giving version numbers to your images is good when you're changing your image ov
 
 Use the instructions above but make one small change to your `sites-available/000-default.conf` file by changing `DocumentRoot /var/www/html` to `DocumentRoot /var/www/html/public`.
 
-The `Dockerfile` in this project is actually a Multi-Stage build. It first builds a composer container, and then builds the php-apache container and *copies* the composer binary from the composer container into the php-apacher container.
+The `Dockerfile` in this project is actually a Multi-Stage build. It first builds a composer container, and then builds the php-apache container and *copies* the composer binary from the composer container into the php-apache container.
 
 Basically this means that the php-apache container has composer installed, but it doesn't have all the additional crap that was required to build it! This keeps container sizes small.
 
@@ -42,21 +43,44 @@ The only problem with the dockerised version of composer is that won't have a to
 
 Now that you have a built image, you can use it. Make sure you're in the directory with your website source files. Run the following command (the volume commands might be different on windows).
 
+#### Windows (Git Bash)
+
 ```bash
-docker run --rm -it --name whatever -v $PWD:/var/www/html -p 8000:80 typo3dev:latest
+docker run --rm --name whatever -v `pwd -W`:/var/www/html -p 8000:80 typo3dev:latest
+```
+
+#### Windows (PowerShell)
+
+The `-it` flag doesn't work in Git Bash, only PowerShell. The way volumes are mounted is different too:
+
+**TODO:** PowerShell command here. I think it's "$PWD", just need to confirm.
+
+#### MacOS
+
+MacOS has a slow filesystem so you'll want to add `:delegated` to your volume mount to speed things up.
+It's basically a file read/write cache between the container and MacOS.
+It *really* does speed things up, so use it.
+
+```bash
+docker run --rm -it --name whatever -v $(pwd):/var/www/html:delegated -p 8000:80 typo3dev:latest
 ```
 
 This will run a container named `whatever` and mount your current directory into the `/var/www/html` directory inside the container, which is where apache is looking.
 
 You have linked your local machine's port `8000` to the container's port `80`, so if you now go to `http://localhost:8000` you should see something from apache!
 
-### typo3_src
+You could mount port 80 too if you know that your host OS doesn't have something using it.
+That means you can have a nice clean `http://localhost` in your browser without any port numbers.
 
-TYPO3 loves to make things difficult by requiring symlinks for the source code. "Who wants to develop on Windows anyway" - TYPO3. Containers cannot see outside the folders that you mount into it, so you'll want to put the `typo3_src` folder inside your project root, not one directory above like the TYPO3 documentation says.
+### typo3_src when not in composer mode
 
-Symlink typo `typo3` and `index.php` files as usual from there.
+TYPO3 loves to make things difficult by requiring symlinks for the source code.
 
-**NEED TO FIND OUT HOW TO DO THIS ON WINDOWS.**
+> "Who wants to develop on Windows anyway" - TYPO3, probably.
+  
+Containers cannot see outside the folders that you mount into it, so you'll want to put the `typo3_src` folder inside your project root, not one directory above like the TYPO3 documentation says.
+
+Symlink typo `typo3` and `index.php` files as usual from there, if you're on MacOS or Linux, otherwise `exec` yourself into the PHP container and run the symlink commands there. It works, surprisingly.
 
 ### Databases
 
@@ -71,4 +95,6 @@ docker exec -it container_name vendor/bin/typo3cms extension:setupactive
 docker exec -it container_name php artisan migrate
 ```
 
-Be wary of permission issues. The container typically runs as a root user, and since it's creating files on your host machine they might be the wrong user for your environment.
+Be wary of permission issues.
+The container typically runs as a root user, and since it's creating files on your host machine they might be the wrong user for your environment.
+Windows seems to handle this OK, but MacOS and Linux do permissions properly so just keep an eye on it.
