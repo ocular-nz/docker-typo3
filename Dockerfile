@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql
 
 
-COPY php/php.ini /usr/local/etc/php/php.ini
+COPY php/conf.d/typo3.ini /usr/local/etc/php/conf.d/
 COPY php/conf.d/opcache.ini /usr/local/etc/php/conf.d/
 COPY sites-available/000-default.conf /etc/apache2/sites-available/
 
