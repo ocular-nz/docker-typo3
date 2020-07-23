@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
         libmagickwand-dev \
         sqlite3 \
         memcached \
+        ssl-cert \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install -j$(nproc) iconv \
@@ -34,5 +35,9 @@ COPY php/conf.d/typo3.ini /usr/local/etc/php/conf.d/
 COPY php/conf.d/opcache.ini /usr/local/etc/php/conf.d/
 COPY sites-available/000-default.conf /etc/apache2/sites-available/
 
-RUN a2enmod rewrite
-RUN a2enmod expires
+ENV DEBIAN_FRONTEND=noninteractive
+RUN make-ssl-cert generate-default-snakeoil --force-overwrite
+
+RUN a2enmod ssl \
+&& a2enmod rewrite \
+&& a2enmod expires
