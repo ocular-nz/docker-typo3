@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
         sqlite3 \
         memcached \
         ssl-cert \
+        mariadb-client \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install -j$(nproc) iconv \
