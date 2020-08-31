@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
         libmagickwand-dev \
         sqlite3 \
         memcached \
+        mariadb-client \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install -j$(nproc) iconv \
