@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install opcache \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install exif \
-    && docker-php-ext-install pdo_mysql
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-install pcntl
 
 
 COPY php/conf.d/typo3.ini /usr/local/etc/php/conf.d/
