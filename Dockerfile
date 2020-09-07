@@ -1,6 +1,6 @@
 FROM composer as composer
 
-FROM php:7.4-apache as server
+FROM php:7.3-apache as server
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -16,11 +16,11 @@ RUN apt-get update && apt-get install -y \
         libmagickwand-dev \
         sqlite3 \
         memcached \
-        default-mysql-client \
+        mariadb-client \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install -j$(nproc) iconv \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include --with-jpeg-dir=/usr/include \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli \
     && docker-php-ext-install intl \
