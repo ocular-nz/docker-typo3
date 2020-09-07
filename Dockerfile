@@ -1,8 +1,10 @@
-FROM composer as composer
+FROM composer AS composer
 
-FROM php:7.4-apache as server
+FROM php:7.4-fpm
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+COPY conf.d/custom.ini /usr/local/etc/php/conf.d/
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
@@ -16,7 +18,7 @@ RUN apt-get update && apt-get install -y \
         libmagickwand-dev \
         sqlite3 \
         memcached \
-        default-mysql-client \
+        mariadb-client \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     && docker-php-ext-install -j$(nproc) iconv \
@@ -30,10 +32,3 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install exif \
     && docker-php-ext-install pdo_mysql \
     && docker-php-ext-install pcntl
-
-RUN a2enmod rewrite
-RUN a2enmod expires
-
-COPY conf.d/typo3.ini /usr/local/etc/php/conf.d/
-COPY conf.d/opcache.ini /usr/local/etc/php/conf.d/
-COPY sites-available/000-default.conf /etc/apache2/sites-available/

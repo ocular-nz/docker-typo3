@@ -1,1 +1,1 @@
-registry.ocular.co.nz/php-apache
+registry.ocular.co.nz/php-fpm
