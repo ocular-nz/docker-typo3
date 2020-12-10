@@ -33,7 +33,13 @@ RUN apt-get update && apt-get install -y \
 
 RUN a2enmod rewrite
 RUN a2enmod expires
+RUN a2enmod remoteip
 
 COPY conf.d/typo3.ini /usr/local/etc/php/conf.d/
 COPY conf.d/opcache.ini /usr/local/etc/php/conf.d/
 COPY sites-available/000-default.conf /etc/apache2/sites-available/
+COPY conf.d/remoteip.conf /etc/apache2/conf-available/
+COPY conf.d/logformat.conf /etc/apache2/conf-available/
+
+RUN a2enconf remoteip
+RUN a2enconf logformat
